@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Врачи — Панель{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="card-clinic p-3">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--gold);font-size:1.1rem;padding:.5rem 1rem;margin-bottom:.5rem">Панель управления</div>
+        <nav class="sidebar-nav d-flex flex-column">
+          <a href="{% url 'admin_panel:dashboard' %}"><i class="bi bi-speedometer2"></i>Дашборд</a>
+          <a href="{% url 'patients:list' %}"><i class="bi bi-people"></i>Пациенты</a>
+          <a href="{% url 'appointments:list' %}"><i class="bi bi-calendar3"></i>Записи</a>
+          <a href="{% url 'admin_panel:doctors' %}" class="active"><i class="bi bi-person-badge"></i>Врачи</a>
+          <a href="{% url 'admin_panel:services' %}"><i class="bi bi-clipboard2-pulse"></i>Услуги</a>
+          <a href="{% url 'admin_panel:users' %}"><i class="bi bi-shield-person"></i>Пользователи</a>
+          <a href="{% url 'admin_panel:report' %}"><i class="bi bi-bar-chart"></i>Отчёты</a>
+          <hr style="border-color:var(--border);margin:.5rem 0">
+          <a href="{% url 'core:home' %}"><i class="bi bi-house"></i>Сайт</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:1.5rem">Врачи</h2>
+      <div class="row g-3">
+        {% for doctor in doctors %}
+        <div class="col-md-6">
+          <div class="card-clinic p-3 d-flex align-items-center gap-3">
+            <img src="{{ doctor.photo }}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top;border:2px solid var(--gold);flex-shrink:0" alt="{{ doctor.full_name }}">
+            <div class="flex-grow-1">
+              <div style="font-weight:500">{{ doctor.full_name }}</div>
+              <div style="color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px">{{ doctor.specialization }}</div>
+              <div style="color:var(--text-muted);font-size:.78rem;margin-top:.25rem">{{ doctor.experience_years }} лет · ★ {{ doctor.rating }} · {{ doctor.appt_count }} записей</div>
+            </div>
+            <a href="{% url 'doctors:detail' doctor.pk %}" class="btn btn-outline-gold btn-sm">→</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Вход — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card-clinic p-4 p-md-5">
+        <div class="text-center mb-4">
+          <p class="section-subtitle">Добро пожаловать</p>
+          <h2 class="section-title" style="font-size:1.8rem">Вход в систему</h2>
+          <div class="divider-gold"></div>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ form.username }}
+            {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Пароль</label>
+            {{ form.password }}
+            {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}
+          </div>
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>{% endif %}
+          <button type="submit" class="btn btn-gold w-100 py-2">Войти</button>
+        </form>
+        <p class="text-center mt-3 mb-0" style="font-size:.85rem;color:var(--text-muted)">
+          Нет аккаунта? <a href="{% url 'accounts:register' %}" style="color:var(--gold)">Зарегистрироваться</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

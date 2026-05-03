@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ service.name }} — {{ clinic_name }}{% endblock %}
+{% block content %}
+<section style="background:var(--dark);padding:4rem 0">
+  <div class="container">
+    <p style="color:var(--gold);font-size:.72rem;letter-spacing:2px;text-transform:uppercase">{{ service.category.name }}</p>
+    <h1 class="section-title" style="color:white;font-size:2.2rem">{{ service.name }}</h1>
+    <div class="d-flex gap-4 mt-2">
+      <span style="color:rgba(255,255,255,0.7);font-size:.85rem"><i class="bi bi-clock me-1"></i>{{ service.duration_minutes }} мин</span>
+      <span style="color:var(--gold);font-weight:600">{{ service.price_display }}</span>
+    </div>
+  </div>
+</section>
+<section class="py-5" style="background:white">
+  <div class="container py-3">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        {% if service.image_url %}
+        <img src="{{ service.image_url }}" style="width:100%;border-radius:4px;margin-bottom:2rem;max-height:400px;object-fit:cover" alt="{{ service.name }}">
+        {% endif %}
+        <h3 class="font-serif" style="font-size:1.4rem;font-weight:500;margin-bottom:1rem">Описание процедуры</h3>
+        <p style="color:var(--text-muted);line-height:1.9;font-size:.95rem">{{ service.description }}</p>
+        {% if service.rehabilitation %}
+        <h3 class="font-serif" style="font-size:1.4rem;font-weight:500;margin:2rem 0 1rem">Реабилитация</h3>
+        <p style="color:var(--text-muted);line-height:1.9;font-size:.95rem">{{ service.rehabilitation }}</p>
+        {% endif %}
+        {% if service.contraindications %}
+        <div style="background:#FFF8F5;border:1px solid #FFE4D6;border-radius:4px;padding:1.5rem;margin-top:2rem">
+          <h5 class="font-serif" style="font-weight:500;color:#C0392B;margin-bottom:.75rem">⚠ Противопоказания</h5>
+          <p style="color:var(--text-muted);font-size:.9rem;line-height:1.8;margin:0">{{ service.contraindications }}</p>
+        </div>
+        {% endif %}
+        {% if doctors %}
+        <h3 class="font-serif" style="font-size:1.4rem;font-weight:500;margin:2rem 0 1rem">Врачи</h3>
+        <div class="row g-3">
+          {% for doctor in doctors %}
+          <div class="col-md-4">
+            <div class="card-clinic p-3 text-center">
+              <img src="{{ doctor.photo }}" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:.75rem" alt="{{ doctor.full_name }}">
+              <div style="font-weight:500;font-size:.9rem">{{ doctor.short_name }}</div>
+              <div style="color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px">{{ doctor.specialization }}</div>
+              <a href="{% url 'doctors:detail' doctor.pk %}" style="color:var(--gold);font-size:.8rem;display:block;margin-top:.5rem">Подробнее →</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-4">
+        <div class="card-clinic p-4" style="position:sticky;top:90px">
+          <h5 class="font-serif" style="font-weight:500;margin-bottom:1.5rem">Стоимость</h5>
+          <div style="font-size:1.8rem;font-family:'Cormorant Garamond',serif;color:var(--gold);font-weight:600;margin-bottom:.25rem">{{ service.price_display }}</div>
+          <div style="color:var(--text-muted);font-size:.8rem;margin-bottom:1.5rem">Длительность: {{ service.duration_minutes }} минут</div>
+          <a href="{% url 'appointments:book' %}" class="btn btn-gold w-100 mb-2">Записаться</a>
+          <a href="{% url 'core:contacts' %}" class="btn btn-outline-gold w-100">Задать вопрос</a>
+          <p style="color:var(--text-muted);font-size:.75rem;text-align:center;margin-top:1rem">Точная стоимость определяется на консультации</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Административная панель — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="card-clinic p-3">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--gold);font-size:1.1rem;padding:.5rem 1rem;margin-bottom:.5rem">Панель управления</div>
+        <nav class="sidebar-nav d-flex flex-column">
+          <a href="{% url 'admin_panel:dashboard' %}" class="active"><i class="bi bi-speedometer2"></i>Дашборд</a>
+          <a href="{% url 'patients:list' %}"><i class="bi bi-people"></i>Пациенты</a>
+          <a href="{% url 'appointments:list' %}"><i class="bi bi-calendar3"></i>Записи</a>
+          <a href="{% url 'admin_panel:doctors' %}"><i class="bi bi-person-badge"></i>Врачи</a>
+          <a href="{% url 'admin_panel:services' %}"><i class="bi bi-clipboard2-pulse"></i>Услуги</a>
+          <a href="{% url 'admin_panel:users' %}"><i class="bi bi-shield-person"></i>Пользователи</a>
+          <a href="{% url 'admin_panel:report' %}"><i class="bi bi-bar-chart"></i>Отчёты</a>
+          <hr style="border-color:var(--border);margin:.5rem 0">
+          <a href="{% url 'django-admin:index' %}"><i class="bi bi-database"></i>Django Admin</a>
+          <a href="{% url 'core:home' %}"><i class="bi bi-house"></i>Сайт</a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="col-lg-9">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:.1rem">Дашборд</h2>
+          <p style="color:var(--text-muted);font-size:.82rem;margin:0">{{ today|date:"d F Y" }}</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-number">{{ stats.total_patients }}</div>
+            <div class="stat-label">Пациентов</div>
+            <div style="color:var(--gold);font-size:.72rem;margin-top:.25rem">+{{ stats.new_patients_month }} за месяц</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-number">{{ stats.appointments_today }}</div>
+            <div class="stat-label">Записей сегодня</div>
+            <div style="color:var(--text-muted);font-size:.72rem;margin-top:.25rem">{{ stats.pending_appointments }} ожидают</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-number">{{ stats.completed_appointments }}</div>
+            <div class="stat-label">Завершено</div>
+            <div style="color:var(--text-muted);font-size:.72rem;margin-top:.25rem">всего</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-number" style="font-size:1.5rem">{{ stats.revenue_month|floatformat:0 }}</div>
+            <div class="stat-label">₽ выручка/месяц</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Today appointments -->
+        <div class="col-md-7">
+          <div class="card-clinic p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="font-serif" style="font-weight:500;margin:0">Записи на сегодня</h5>
+              <a href="{% url 'appointments:list' %}?date={{ today|date:'Y-m-d' }}" style="color:var(--gold);font-size:.82rem">Все →</a>
+            </div>
+            {% for appt in today_appointments %}
+            <div class="d-flex align-items-center justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+              <div>
+                <div style="font-weight:500;font-size:.88rem">{{ appt.time|time:"H:i" }} — {{ appt.patient.full_name }}</div>
+                <div style="color:var(--text-muted);font-size:.78rem">{{ appt.doctor.short_name }} · {{ appt.service.name|default:"Консультация" }}</div>
+              </div>
+              <span class="badge-status-{{ appt.status }}">{{ appt.get_status_display }}</span>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-muted);text-align:center;padding:1rem;font-size:.85rem">Записей на сегодня нет</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Top services + recent patients -->
+        <div class="col-md-5">
+          <div class="card-clinic p-4 mb-4">
+            <h5 class="font-serif" style="font-weight:500;margin-bottom:1rem">Популярные услуги</h5>
+            {% for service in top_services %}
+            <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+              <span style="font-size:.85rem;font-weight:500">{{ service.name|truncatechars:25 }}</span>
+              <span style="color:var(--gold);font-size:.82rem;font-weight:600">{{ service.appt_count }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="card-clinic p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="font-serif" style="font-weight:500;margin:0">Новые пациенты</h5>
+              <a href="{% url 'patients:list' %}" style="color:var(--gold);font-size:.82rem">Все →</a>
+            </div>
+            {% for patient in recent_patients %}
+            <div class="d-flex align-items-center gap-2 py-2" style="border-bottom:1px solid var(--border)">
+              <div style="width:32px;height:32px;border-radius:50%;background:rgba(201,169,110,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--gold);font-size:.85rem;flex-shrink:0">{{ patient.last_name.0 }}</div>
+              <div class="flex-grow-1">
+                <div style="font-size:.85rem;font-weight:500">{{ patient.full_name }}</div>
+                <div style="color:var(--text-muted);font-size:.75rem">{{ patient.created_at|date:"d.m.Y" }}</div>
+              </div>
+              <a href="{% url 'patients:detail' patient.pk %}" style="color:var(--gold);font-size:.8rem">→</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

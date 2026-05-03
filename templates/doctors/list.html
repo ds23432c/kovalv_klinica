@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Наши врачи — {{ clinic_name }}{% endblock %}
+{% block content %}
+<section style="background:var(--dark);padding:4rem 0">
+  <div class="container text-center">
+    <p class="section-subtitle" style="color:var(--gold)">Профессионалы</p>
+    <h1 class="section-title" style="color:white">Наши врачи</h1>
+    <div class="divider-gold"></div>
+  </div>
+</section>
+<section class="py-5" style="background:var(--cream)">
+  <div class="container">
+    {% if specializations %}
+    <div class="d-flex gap-2 flex-wrap mb-4">
+      <a href="{% url 'doctors:list' %}" class="btn {% if not selected_spec %}btn-gold{% else %}btn-outline-gold{% endif %} btn-sm">Все</a>
+      {% for spec in specializations %}
+      <a href="?spec={{ spec.pk }}" class="btn {% if selected_spec == spec.pk|slugify %}btn-gold{% else %}btn-outline-gold{% endif %} btn-sm">{{ spec.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="row g-4">
+      {% for doctor in doctors %}
+      <div class="col-md-4">
+        <div class="card-clinic h-100">
+          <img src="{{ doctor.photo }}" style="width:100%;height:260px;object-fit:cover;object-position:top" alt="{{ doctor.full_name }}">
+          <div class="p-4">
+            <p style="color:var(--gold);font-size:.72rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem">{{ doctor.specialization }}</p>
+            <h5 class="font-serif" style="font-size:1.25rem;font-weight:500;margin-bottom:.5rem">{{ doctor.full_name }}</h5>
+            <p style="color:var(--text-muted);font-size:.83rem;line-height:1.7;margin-bottom:1rem">{{ doctor.bio|truncatechars:110 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span style="color:var(--gold);font-weight:600">★ {{ doctor.rating }}</span>
+                <span style="color:var(--text-muted);font-size:.8rem;margin-left:.5rem">{{ doctor.experience_years }} лет</span>
+              </div>
+              <a href="{% url 'doctors:detail' doctor.pk %}" class="btn btn-outline-gold btn-sm">Подробнее</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5" style="color:var(--text-muted)">Врачи не найдены</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

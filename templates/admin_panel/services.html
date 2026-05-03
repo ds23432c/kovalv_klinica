@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Услуги — Панель{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="card-clinic p-3">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--gold);font-size:1.1rem;padding:.5rem 1rem;margin-bottom:.5rem">Панель управления</div>
+        <nav class="sidebar-nav d-flex flex-column">
+          <a href="{% url 'admin_panel:dashboard' %}"><i class="bi bi-speedometer2"></i>Дашборд</a>
+          <a href="{% url 'patients:list' %}"><i class="bi bi-people"></i>Пациенты</a>
+          <a href="{% url 'appointments:list' %}"><i class="bi bi-calendar3"></i>Записи</a>
+          <a href="{% url 'admin_panel:doctors' %}"><i class="bi bi-person-badge"></i>Врачи</a>
+          <a href="{% url 'admin_panel:services' %}" class="active"><i class="bi bi-clipboard2-pulse"></i>Услуги</a>
+          <a href="{% url 'admin_panel:users' %}"><i class="bi bi-shield-person"></i>Пользователи</a>
+          <a href="{% url 'admin_panel:report' %}"><i class="bi bi-bar-chart"></i>Отчёты</a>
+          <hr style="border-color:var(--border);margin:.5rem 0">
+          <a href="{% url 'core:home' %}"><i class="bi bi-house"></i>Сайт</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:1.5rem">Услуги</h2>
+      <div class="card-clinic overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-clinic mb-0">
+            <thead><tr><th>Услуга</th><th>Категория</th><th>Цена</th><th>Длительность</th><th>Записей</th><th>Статус</th></tr></thead>
+            <tbody>
+              {% for service in services %}
+              <tr>
+                <td>
+                  <div style="font-weight:500;font-size:.88rem">{{ service.name }}</div>
+                </td>
+                <td style="font-size:.82rem;color:var(--text-muted)">{{ service.category.name }}</td>
+                <td style="color:var(--gold);font-weight:600;font-size:.88rem">{{ service.price_display }}</td>
+                <td style="font-size:.82rem;color:var(--text-muted)">{{ service.duration_minutes }} мин</td>
+                <td style="font-size:.85rem">{{ service.appt_count }}</td>
+                <td>{% if service.is_active %}<span style="color:#198754;font-size:.8rem">● Активна</span>{% else %}<span style="color:#DC3545;font-size:.8rem">● Скрыта</span>{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

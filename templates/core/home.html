@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block title %}{{ clinic_name }} — Клиника пластической хирургии{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<section style="background: linear-gradient(135deg, var(--dark) 0%, #16213E 100%); min-height: 90vh; display:flex; align-items:center; position:relative; overflow:hidden;">
+  <div style="position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1400&auto=format&fit=crop') center/cover no-repeat;opacity:0.15;"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <p class="section-subtitle mb-3">Клиника пластической хирургии</p>
+        <h1 class="font-serif mb-4" style="font-size:3.5rem;font-weight:400;color:white;line-height:1.15">
+          Искусство<br>совершенства<br><span style="color:var(--gold)">и красоты</span>
+        </h1>
+        <p style="color:rgba(255,255,255,0.7);font-size:1rem;line-height:1.8;max-width:480px;margin-bottom:2rem">
+          Команда ведущих пластических хирургов и косметологов. Безопасность, эстетика и естественный результат — в каждой процедуре.
+        </p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'appointments:book' %}" class="btn btn-gold px-4 py-2">Записаться на консультацию</a>
+          <a href="{% url 'services:list' %}" class="btn btn-outline-gold px-4 py-2">Наши услуги</a>
+        </div>
+        <div class="row g-3 mt-4">
+          <div class="col-4">
+            <div style="text-align:center">
+              <div class="font-serif" style="font-size:2rem;color:var(--gold);font-weight:600">{{ stat_patients }}+</div>
+              <div style="font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Пациентов</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div style="text-align:center">
+              <div class="font-serif" style="font-size:2rem;color:var(--gold);font-weight:600">{{ stat_doctors }}</div>
+              <div style="font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Врачей</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div style="text-align:center">
+              <div class="font-serif" style="font-size:2rem;color:var(--gold);font-weight:600">15+</div>
+              <div style="font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Лет опыта</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=700&auto=format&fit=crop" 
+             style="width:100%;border-radius:4px;box-shadow:0 30px 80px rgba(0,0,0,0.4)" alt="Клиника">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="py-5" style="background:white">
+  <div class="container py-3">
+    <div class="text-center mb-5">
+      <p class="section-subtitle">Что мы предлагаем</p>
+      <h2 class="section-title">Наши услуги</h2>
+      <div class="divider-gold"></div>
+    </div>
+    <div class="row g-4">
+      {% for service in popular_services %}
+      <div class="col-md-4">
+        <div class="card-clinic h-100">
+          {% if service.image_url %}
+          <img src="{{ service.image_url }}" style="width:100%;height:220px;object-fit:cover" alt="{{ service.name }}">
+          {% endif %}
+          <div class="p-4">
+            <div style="font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem">{{ service.category.name }}</div>
+            <h5 class="font-serif" style="font-size:1.3rem;font-weight:500;margin-bottom:.75rem">{{ service.name }}</h5>
+            <p style="color:var(--text-muted);font-size:.85rem;line-height:1.7;margin-bottom:1rem">{{ service.description|truncatechars:120 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span style="color:var(--gold);font-weight:600;font-size:.9rem">{{ service.price_display }}</span>
+              <a href="{% url 'services:detail' service.pk %}" class="btn btn-outline-gold btn-sm">Подробнее</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'services:list' %}" class="btn btn-gold px-4">Все услуги</a>
+    </div>
+  </div>
+</section>
+
+<!-- Doctors -->
+<section class="py-5" style="background:var(--cream)">
+  <div class="container py-3">
+    <div class="text-center mb-5">
+      <p class="section-subtitle">Профессионалы своего дела</p>
+      <h2 class="section-title">Наши врачи</h2>
+      <div class="divider-gold"></div>
+    </div>
+    <div class="row g-4">
+      {% for doctor in featured_doctors %}
+      <div class="col-md-4">
+        <div class="card-clinic text-center h-100 p-4">
+          <img src="{{ doctor.photo }}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin-bottom:1rem" alt="{{ doctor.full_name }}">
+          <h5 class="font-serif" style="font-size:1.2rem;font-weight:500;margin-bottom:.25rem">{{ doctor.full_name }}</h5>
+          <p style="color:var(--gold);font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:.75rem">{{ doctor.specialization }}</p>
+          <p style="color:var(--text-muted);font-size:.83rem;line-height:1.6;margin-bottom:1rem">{{ doctor.bio|truncatechars:100 }}</p>
+          <div class="d-flex justify-content-center gap-3 mb-3">
+            <div>
+              <div class="font-serif" style="font-size:1.3rem;color:var(--gold);font-weight:600">{{ doctor.experience_years }}</div>
+              <div style="font-size:.7rem;color:var(--text-muted)">лет опыта</div>
+            </div>
+            <div>
+              <div class="font-serif" style="font-size:1.3rem;color:var(--gold);font-weight:600">{{ doctor.rating }}</div>
+              <div style="font-size:.7rem;color:var(--text-muted)">рейтинг</div>
+            </div>
+          </div>
+          <a href="{% url 'doctors:detail' doctor.pk %}" class="btn btn-outline-gold btn-sm w-100">Профиль врача</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'doctors:list' %}" class="btn btn-gold px-4">Все врачи</a>
+    </div>
+  </div>
+</section>
+
+<!-- Why us -->
+<section class="py-5" style="background:var(--dark)">
+  <div class="container py-3">
+    <div class="text-center mb-5">
+      <p class="section-subtitle" style="color:var(--gold)">Наши преимущества</p>
+      <h2 class="section-title" style="color:white">Почему выбирают нас</h2>
+      <div class="divider-gold"></div>
+    </div>
+    <div class="row g-4">
+      {% for icon, title, text in '✦,Лицензированная клиника,Все операции проводятся с соблюдением стандартов безопасности и медицинского права|✦,Опытные хирурги,Наши врачи имеют от 6 до 15 лет практики в ведущих клиниках России и Европы|✦,Современное оборудование,Используем последние технологии для безопасных и эффективных процедур|✦,Индивидуальный подход,Каждый пациент получает персональный план лечения и постоянное сопровождение|✦,Реабилитация,Полная поддержка на всех этапах: до, во время и после процедуры|✦,Гарантия результата,Мы несём ответственность за качество работы и здоровье наших пациентов' | split:'|' %}
+      <div class="col-md-4">
+        <div style="border:1px solid rgba(201,169,110,0.2);border-radius:4px;padding:2rem;height:100%">
+          <div style="color:var(--gold);font-size:1.5rem;margin-bottom:1rem">{{ icon }}</div>
+          <h5 style="color:white;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:500;margin-bottom:.75rem">{{ title }}</h5>
+          <p style="color:rgba(255,255,255,0.6);font-size:.85rem;line-height:1.7;margin:0">{{ text }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5" style="background:white">
+  <div class="container py-3 text-center">
+    <p class="section-subtitle">Начните сегодня</p>
+    <h2 class="section-title mb-3">Запишитесь на консультацию</h2>
+    <div class="divider-gold"></div>
+    <p style="color:var(--text-muted);max-width:500px;margin:1.5rem auto;font-size:.9rem;line-height:1.8">Первая консультация поможет определить оптимальный план лечения. Наши специалисты ответят на все вопросы.</p>
+    <a href="{% url 'appointments:book' %}" class="btn btn-gold px-5 py-2" style="font-size:.9rem">Записаться бесплатно</a>
+  </div>
+</section>
+
+{% endblock %}

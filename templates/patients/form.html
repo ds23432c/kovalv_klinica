@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card-clinic p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title" style="font-size:1.8rem;margin:0">{{ title }}</h2>
+          {% if patient %}<a href="{% url 'patients:detail' patient.pk %}" class="btn btn-outline-gold btn-sm">← Назад</a>{% endif %}
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-3">
+            {% for field in form %}
+            <div class="{% if field.name in 'first_name,last_name,middle_name,date_of_birth,gender,phone,email,blood_type' %}col-md-6{% else %}col-12{% endif %}">
+              <label class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="d-flex gap-3 mt-4">
+            <button type="submit" class="btn btn-gold px-4">Сохранить</button>
+            {% if patient %}
+            <a href="{% url 'patients:detail' patient.pk %}" class="btn btn-outline-gold px-4">Отмена</a>
+            {% else %}
+            <a href="{% url 'patients:list' %}" class="btn btn-outline-gold px-4">Отмена</a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ doctor.full_name }} — {{ clinic_name }}{% endblock %}
+{% block content %}
+<section style="background:var(--dark);padding:4rem 0">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-md-3 text-center">
+        <img src="{{ doctor.photo }}" style="width:160px;height:160px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--gold)" alt="{{ doctor.full_name }}">
+      </div>
+      <div class="col-md-9">
+        <p style="color:var(--gold);font-size:.75rem;letter-spacing:2px;text-transform:uppercase">{{ doctor.specialization }}</p>
+        <h1 class="section-title" style="color:white;font-size:2.2rem">{{ doctor.full_name }}</h1>
+        <div class="d-flex gap-4 mt-3">
+          <div><span class="font-serif" style="font-size:1.5rem;color:var(--gold);font-weight:600">{{ doctor.experience_years }}</span><span style="color:rgba(255,255,255,0.6);font-size:.8rem;margin-left:.3rem">лет опыта</span></div>
+          <div><span class="font-serif" style="font-size:1.5rem;color:var(--gold);font-weight:600">★ {{ doctor.rating }}</span><span style="color:rgba(255,255,255,0.6);font-size:.8rem;margin-left:.3rem">рейтинг</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="py-5" style="background:white">
+  <div class="container py-3">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <h3 class="font-serif" style="font-size:1.5rem;font-weight:500;margin-bottom:1rem">О враче</h3>
+        <p style="color:var(--text-muted);line-height:1.9;font-size:.95rem">{{ doctor.bio }}</p>
+        {% if doctor.education %}
+        <h3 class="font-serif" style="font-size:1.5rem;font-weight:500;margin:2rem 0 1rem">Образование</h3>
+        <p style="color:var(--text-muted);line-height:1.9;font-size:.95rem">{{ doctor.education }}</p>
+        {% endif %}
+        {% if services %}
+        <h3 class="font-serif" style="font-size:1.5rem;font-weight:500;margin:2rem 0 1rem">Услуги</h3>
+        <div class="row g-3">
+          {% for service in services %}
+          <div class="col-md-6">
+            <div style="border:1px solid var(--border);border-radius:4px;padding:1rem">
+              <div style="font-weight:500;margin-bottom:.25rem">{{ service.name }}</div>
+              <div style="color:var(--gold);font-size:.85rem">{{ service.price_display }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-4">
+        <div class="card-clinic p-4" style="position:sticky;top:90px">
+          <h5 class="font-serif" style="font-weight:500;margin-bottom:1rem">Расписание</h5>
+          {% for slot in schedule %}
+          <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);font-size:.85rem">{{ slot.get_day_of_week_display }}</span>
+            <span style="font-size:.85rem;font-weight:500">{{ slot.start_time|time:"H:i" }} – {{ slot.end_time|time:"H:i" }}</span>
+          </div>
+          {% empty %}
+          <p style="color:var(--text-muted);font-size:.85rem">Расписание уточняется</p>
+          {% endfor %}
+          {% if doctor.phone %}<p class="mt-3 mb-1" style="font-size:.85rem"><i class="bi bi-telephone me-2" style="color:var(--gold)"></i>{{ doctor.phone }}</p>{% endif %}
+          <a href="{% url 'appointments:book' %}" class="btn btn-gold w-100 mt-3">Записаться к врачу</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

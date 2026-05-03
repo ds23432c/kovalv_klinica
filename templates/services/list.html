@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Услуги — {{ clinic_name }}{% endblock %}
+{% block content %}
+<section style="background:var(--dark);padding:4rem 0">
+  <div class="container text-center">
+    <p class="section-subtitle" style="color:var(--gold)">Что мы предлагаем</p>
+    <h1 class="section-title" style="color:white">Услуги клиники</h1>
+    <div class="divider-gold"></div>
+  </div>
+</section>
+<section class="py-5" style="background:var(--cream)">
+  <div class="container">
+    <div class="d-flex gap-2 flex-wrap mb-4">
+      <a href="{% url 'services:list' %}" class="btn {% if not selected_cat %}btn-gold{% else %}btn-outline-gold{% endif %} btn-sm">Все</a>
+      {% for cat in categories %}
+      <a href="?cat={{ cat.pk }}" class="btn {% if selected_cat == cat.pk|slugify %}btn-gold{% else %}btn-outline-gold{% endif %} btn-sm">{{ cat.icon }} {{ cat.name }}</a>
+      {% endfor %}
+    </div>
+    <div class="row g-4">
+      {% for service in services %}
+      <div class="col-md-4">
+        <div class="card-clinic h-100">
+          {% if service.image_url %}
+          <img src="{{ service.image_url }}" style="width:100%;height:200px;object-fit:cover" alt="{{ service.name }}">
+          {% endif %}
+          <div class="p-4">
+            <p style="color:var(--gold);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:.4rem">{{ service.category.name }}</p>
+            <h5 class="font-serif" style="font-size:1.2rem;font-weight:500;margin-bottom:.75rem">{{ service.name }}</h5>
+            <p style="color:var(--text-muted);font-size:.83rem;line-height:1.7;margin-bottom:1rem">{{ service.description|truncatechars:110 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div style="color:var(--gold);font-weight:600;font-size:.9rem">{{ service.price_display }}</div>
+                <div style="color:var(--text-muted);font-size:.75rem">{{ service.duration_minutes }} мин</div>
+              </div>
+              <a href="{% url 'services:detail' service.pk %}" class="btn btn-outline-gold btn-sm">Подробнее</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5" style="color:var(--text-muted)">Услуги не найдены</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

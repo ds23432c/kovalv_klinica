@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Записи — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:.25rem">Журнал записей</h2>
+      <p style="color:var(--text-muted);font-size:.85rem;margin:0">Управление записями пациентов</p>
+    </div>
+    <a href="{% url 'appointments:create' %}" class="btn btn-gold"><i class="bi bi-plus me-1"></i>Новая запись</a>
+  </div>
+
+  <!-- Filters -->
+  <div class="card-clinic p-3 mb-4">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Статус</label>
+        <select name="status" class="form-select">
+          <option value="">Все статусы</option>
+          {% for val, label in statuses %}
+          <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Дата</label>
+        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Врач</label>
+        <select name="doctor" class="form-select">
+          <option value="">Все врачи</option>
+          {% for d in doctors %}
+          <option value="{{ d.pk }}" {% if doctor_filter == d.pk|stringformat:'s' %}selected{% endif %}>{{ d.short_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-gold w-100">Фильтр</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-clinic overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-clinic mb-0">
+        <thead>
+          <tr>
+            <th>Дата и время</th>
+            <th>Пациент</th>
+            <th>Врач</th>
+            <th>Услуга</th>
+            <th>Статус</th>
+            <th>Оплата</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr {% if appt.date == today %}style="background:rgba(201,169,110,0.05)"{% endif %}>
+            <td>
+              <div style="font-weight:500">{{ appt.date|date:"d.m.Y" }}</div>
+              <div style="color:var(--text-muted);font-size:.8rem">{{ appt.time|time:"H:i" }}</div>
+            </td>
+            <td>
+              <a href="{% url 'patients:detail' appt.patient.pk %}" style="color:var(--text);font-weight:500;text-decoration:none">
+                {{ appt.patient.full_name }}
+              </a>
+              <div style="color:var(--text-muted);font-size:.8rem">{{ appt.patient.phone }}</div>
+            </td>
+            <td style="font-size:.88rem">{{ appt.doctor.short_name }}</td>
+            <td style="font-size:.85rem;color:var(--text-muted)">{{ appt.service.name|default:"—" }}</td>
+            <td><span class="badge-status-{{ appt.status }}">{{ appt.get_status_display }}</span></td>
+            <td>
+              {% if appt.price %}
+              <div style="font-size:.85rem">{{ appt.price|floatformat:0 }} ₽</div>
+              {% if appt.is_paid %}
+              <span style="color:#198754;font-size:.75rem">✓ Оплачено</span>
+              {% else %}
+              <span style="color:#DC3545;font-size:.75rem">Не оплачено</span>
+              {% endif %}
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <a href="{% url 'appointments:detail' appt.pk %}" class="btn btn-outline-gold btn-sm">Открыть</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted)">Записей не найдено</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

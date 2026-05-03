@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Пациенты — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:.25rem">Пациенты</h2>
+      <p style="color:var(--text-muted);font-size:.85rem;margin:0">База данных пациентов клиники</p>
+    </div>
+    <a href="{% url 'patients:create' %}" class="btn btn-gold"><i class="bi bi-plus me-1"></i>Новый пациент</a>
+  </div>
+
+  <!-- Search -->
+  <div class="card-clinic p-3 mb-4">
+    <form method="get" class="d-flex gap-2">
+      <input type="text" name="q" class="form-control" placeholder="Поиск по имени, телефону, email..." value="{{ query }}">
+      <button type="submit" class="btn btn-gold px-4">Найти</button>
+      {% if query %}<a href="{% url 'patients:list' %}" class="btn btn-outline-gold px-3">✕</a>{% endif %}
+    </form>
+  </div>
+
+  <div class="card-clinic overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-clinic mb-0">
+        <thead>
+          <tr>
+            <th>Пациент</th>
+            <th>Дата рождения</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Группа крови</th>
+            <th>Записей</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for patient in patients %}
+          <tr>
+            <td>
+              <div style="font-weight:500">{{ patient.full_name }}</div>
+              <div style="color:var(--text-muted);font-size:.78rem">{{ patient.get_gender_display }} · {{ patient.age }} лет</div>
+            </td>
+            <td style="font-size:.88rem;color:var(--text-muted)">{{ patient.date_of_birth|date:"d.m.Y" }}</td>
+            <td style="font-size:.88rem">{{ patient.phone }}</td>
+            <td style="font-size:.85rem;color:var(--text-muted)">{{ patient.email|default:"—" }}</td>
+            <td>
+              {% if patient.blood_type %}
+              <span style="background:rgba(201,169,110,0.15);color:var(--gold);border:1px solid var(--border);border-radius:2px;padding:2px 8px;font-size:.78rem;font-weight:600">{{ patient.blood_type }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td style="font-size:.88rem">{{ patient.appointments.count }}</td>
+            <td>
+              <div class="d-flex gap-1">
+                <a href="{% url 'patients:detail' patient.pk %}" class="btn btn-outline-gold btn-sm">Карта</a>
+                <a href="{% url 'patients:edit' patient.pk %}" class="btn btn-outline-gold btn-sm"><i class="bi bi-pencil"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center py-4" style="color:var(--text-muted)">
+            {% if query %}Пациенты не найдены по запросу "{{ query }}"{% else %}Пациентов пока нет{% endif %}
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

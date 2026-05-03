@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Записаться — {{ clinic_name }}{% endblock %}
+{% block content %}
+<section style="background:var(--dark);padding:4rem 0">
+  <div class="container text-center">
+    <p class="section-subtitle" style="color:var(--gold)">Онлайн-запись</p>
+    <h1 class="section-title" style="color:white">Запись на приём</h1>
+    <div class="divider-gold"></div>
+  </div>
+</section>
+<section class="py-5" style="background:var(--cream)">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-md-7">
+        <div class="card-clinic p-4 p-md-5">
+          <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:2rem;text-align:center">Заполните форму и мы свяжемся с вами для подтверждения записи</p>
+          <form method="post">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Имя *</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Фамилия *</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}<div class="text-danger small">{{ form.last_name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Телефон *</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                {{ form.email }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Врач *</label>
+                {{ form.doctor }}
+                {% if form.doctor.errors %}<div class="text-danger small">{{ form.doctor.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Услуга</label>
+                {{ form.service }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Дата *</label>
+                {{ form.date }}
+                {% if form.date.errors %}<div class="text-danger small">{{ form.date.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Время *</label>
+                {{ form.time }}
+                {% if form.time.errors %}<div class="text-danger small">{{ form.time.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label class="form-label">Цель визита / жалобы</label>
+                {{ form.complaint }}
+              </div>
+            </div>
+            {% if form.non_field_errors %}<div class="alert alert-danger mt-3">{{ form.non_field_errors.0 }}</div>{% endif %}
+            <button type="submit" class="btn btn-gold w-100 py-2 mt-4" style="font-size:.9rem">Отправить заявку</button>
+          </form>
+          <p style="color:var(--text-muted);font-size:.78rem;text-align:center;margin-top:1rem">Нажимая кнопку, вы соглашаетесь на обработку персональных данных</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

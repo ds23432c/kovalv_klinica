@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Профиль — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card-clinic p-4 text-center">
+        <img src="{{ user.avatar }}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin-bottom:1rem" alt="{{ user }}">
+        <h4 class="font-serif" style="font-weight:500">{{ user.get_full_name|default:user.email }}</h4>
+        <p style="color:var(--gold);font-size:.75rem;letter-spacing:1px;text-transform:uppercase">{{ user.get_role_display }}</p>
+        {% if user.phone %}<p style="color:var(--text-muted);font-size:.85rem"><i class="bi bi-telephone me-1"></i>{{ user.phone }}</p>{% endif %}
+        <p style="color:var(--text-muted);font-size:.85rem"><i class="bi bi-envelope me-1"></i>{{ user.email }}</p>
+        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-gold btn-sm w-100 mt-2">Редактировать</a>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card-clinic p-4">
+        <h5 class="font-serif" style="font-weight:500;margin-bottom:1.5rem">Мои записи</h5>
+        {% if appointments %}
+        <div class="table-responsive">
+          <table class="table table-clinic">
+            <thead><tr><th>Дата</th><th>Врач</th><th>Услуга</th><th>Статус</th></tr></thead>
+            <tbody>
+              {% for appt in appointments %}
+              <tr>
+                <td>{{ appt.date|date:"d.m.Y" }} {{ appt.time|time:"H:i" }}</td>
+                <td>{{ appt.doctor.short_name }}</td>
+                <td>{{ appt.service.name|default:"—" }}</td>
+                <td><span class="badge-status-{{ appt.status }}">{{ appt.get_status_display }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted);text-align:center;padding:2rem">У вас пока нет записей. <a href="{% url 'appointments:book' %}" style="color:var(--gold)">Записаться</a></p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

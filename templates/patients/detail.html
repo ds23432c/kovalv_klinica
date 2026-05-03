@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}{{ patient.full_name }} — {{ clinic_name }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+      <a href="{% url 'patients:list' %}" style="color:var(--text-muted);font-size:.82rem;text-decoration:none"><i class="bi bi-arrow-left me-1"></i>Все пациенты</a>
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin:.25rem 0 0">{{ patient.full_name }}</h2>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'patients:add_record' patient.pk %}" class="btn btn-outline-gold btn-sm"><i class="bi bi-plus me-1"></i>Запись</a>
+      <a href="{% url 'appointments:create' %}" class="btn btn-outline-gold btn-sm"><i class="bi bi-calendar-plus me-1"></i>Записать</a>
+      <a href="{% url 'patients:edit' patient.pk %}" class="btn btn-gold btn-sm"><i class="bi bi-pencil me-1"></i>Изменить</a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left: personal info -->
+    <div class="col-lg-4">
+      <div class="card-clinic p-4 mb-4">
+        <div class="text-center mb-3">
+          {% if patient.photo %}
+          <img src="{{ patient.photo }}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:1rem" alt="">
+          {% else %}
+          <div style="width:90px;height:90px;border-radius:50%;background:rgba(201,169,110,0.15);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:var(--gold)">{{ patient.last_name.0 }}</div>
+          {% endif %}
+          <h5 class="font-serif" style="font-weight:500;font-size:1.15rem">{{ patient.full_name }}</h5>
+          <p style="color:var(--text-muted);font-size:.82rem">{{ patient.get_gender_display }} · {{ patient.age }} лет</p>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:1rem">
+          {% for label, value in 'Телефон,'|add:patient.phone|split:',' %}{% endfor %}
+          <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);font-size:.82rem">Дата рождения</span>
+            <span style="font-size:.85rem;font-weight:500">{{ patient.date_of_birth|date:"d.m.Y" }}</span>
+          </div>
+          <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);font-size:.82rem">Телефон</span>
+            <span style="font-size:.85rem;font-weight:500">{{ patient.phone }}</span>
+          </div>
+          {% if patient.email %}
+          <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);font-size:.82rem">Email</span>
+            <span style="font-size:.82rem">{{ patient.email }}</span>
+          </div>
+          {% endif %}
+          {% if patient.blood_type %}
+          <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+            <span style="color:var(--text-muted);font-size:.82rem">Группа крови</span>
+            <span style="color:var(--gold);font-weight:600">{{ patient.blood_type }}</span>
+          </div>
+          {% endif %}
+          {% if patient.address %}
+          <div class="py-2">
+            <span style="color:var(--text-muted);font-size:.82rem">Адрес</span>
+            <div style="font-size:.85rem;margin-top:.25rem">{{ patient.address }}</div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if patient.allergies %}
+      <div style="background:#FFF8F0;border:1px solid #FFE4C4;border-radius:4px;padding:1rem;margin-bottom:1rem">
+        <div style="color:#B8860B;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">⚠ Аллергии</div>
+        <p style="font-size:.85rem;margin:0;color:var(--text)">{{ patient.allergies }}</p>
+      </div>
+      {% endif %}
+      {% if patient.contraindications %}
+      <div style="background:#FFF5F5;border:1px solid #FFCCCC;border-radius:4px;padding:1rem">
+        <div style="color:#C0392B;font-size:.72rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem">⚠ Противопоказания</div>
+        <p style="font-size:.85rem;margin:0;color:var(--text)">{{ patient.contraindications }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Right: medical history and appointments -->
+    <div class="col-lg-8">
+      <!-- Medical records -->
+      <div class="card-clinic p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="font-serif" style="font-weight:500;margin:0">История лечения</h5>
+          <a href="{% url 'patients:add_record' patient.pk %}" class="btn btn-outline-gold btn-sm"><i class="bi bi-plus me-1"></i>Добавить</a>
+        </div>
+        {% for record in records %}
+        <div style="border:1px solid var(--border);border-radius:4px;padding:1rem;margin-bottom:.75rem">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <div style="font-weight:500;font-size:.9rem">{{ record.diagnosis }}</div>
+              <div style="color:var(--text-muted);font-size:.78rem">{{ record.doctor_name }} · {{ record.date|date:"d.m.Y" }}</div>
+            </div>
+          </div>
+          <p style="color:var(--text-muted);font-size:.85rem;line-height:1.7;margin-bottom:0">{{ record.treatment }}</p>
+          {% if record.before_photo or record.after_photo %}
+          <div class="d-flex gap-2 mt-2">
+            {% if record.before_photo %}<img src="{{ record.before_photo }}" style="height:80px;border-radius:4px;object-fit:cover" alt="До">{% endif %}
+            {% if record.after_photo %}<img src="{{ record.after_photo }}" style="height:80px;border-radius:4px;object-fit:cover" alt="После">{% endif %}
+          </div>
+          {% endif %}
+        </div>
+        {% empty %}
+        <p style="color:var(--text-muted);text-align:center;padding:1rem">История лечения пуста</p>
+        {% endfor %}
+      </div>
+
+      <!-- Appointments -->
+      <div class="card-clinic p-4">
+        <h5 class="font-serif" style="font-weight:500;margin-bottom:1rem">Записи на приём</h5>
+        {% for appt in appointments %}
+        <div class="d-flex justify-content-between align-items-center py-2" style="border-bottom:1px solid var(--border)">
+          <div>
+            <div style="font-weight:500;font-size:.88rem">{{ appt.date|date:"d.m.Y" }} {{ appt.time|time:"H:i" }}</div>
+            <div style="color:var(--text-muted);font-size:.78rem">{{ appt.doctor.short_name }} · {{ appt.service.name|default:"Консультация" }}</div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge-status-{{ appt.status }}">{{ appt.get_status_display }}</span>
+            <a href="{% url 'appointments:detail' appt.pk %}" style="color:var(--gold);font-size:.8rem">→</a>
+          </div>
+        </div>
+        {% empty %}
+        <p style="color:var(--text-muted);text-align:center;padding:1rem">Записей нет</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

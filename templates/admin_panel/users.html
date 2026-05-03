@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Пользователи — Панель{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="card-clinic p-3">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--gold);font-size:1.1rem;padding:.5rem 1rem;margin-bottom:.5rem">Панель управления</div>
+        <nav class="sidebar-nav d-flex flex-column">
+          <a href="{% url 'admin_panel:dashboard' %}"><i class="bi bi-speedometer2"></i>Дашборд</a>
+          <a href="{% url 'patients:list' %}"><i class="bi bi-people"></i>Пациенты</a>
+          <a href="{% url 'appointments:list' %}"><i class="bi bi-calendar3"></i>Записи</a>
+          <a href="{% url 'admin_panel:doctors' %}"><i class="bi bi-person-badge"></i>Врачи</a>
+          <a href="{% url 'admin_panel:services' %}"><i class="bi bi-clipboard2-pulse"></i>Услуги</a>
+          <a href="{% url 'admin_panel:users' %}" class="active"><i class="bi bi-shield-person"></i>Пользователи</a>
+          <a href="{% url 'admin_panel:report' %}"><i class="bi bi-bar-chart"></i>Отчёты</a>
+          <hr style="border-color:var(--border);margin:.5rem 0">
+          <a href="{% url 'core:home' %}"><i class="bi bi-house"></i>Сайт</a>
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <h2 class="font-serif" style="font-weight:500;font-size:1.8rem;margin-bottom:1.5rem">Пользователи</h2>
+      <div class="card-clinic overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-clinic mb-0">
+            <thead><tr><th>Пользователь</th><th>Роль</th><th>Телефон</th><th>Регистрация</th><th>Статус</th><th>Действие</th></tr></thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="{{ u.avatar }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--border)" alt="">
+                    <div>
+                      <div style="font-weight:500;font-size:.88rem">{{ u.get_full_name|default:u.username }}</div>
+                      <div style="color:var(--text-muted);font-size:.75rem">{{ u.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size:.82rem;color:var(--text-muted)">{{ u.get_role_display }}</td>
+                <td style="font-size:.82rem">{{ u.phone|default:"—" }}</td>
+                <td style="font-size:.82rem;color:var(--text-muted)">{{ u.date_joined|date:"d.m.Y" }}</td>
+                <td>{% if u.is_active %}<span style="color:#198754;font-size:.8rem">● Активен</span>{% else %}<span style="color:#DC3545;font-size:.8rem">● Заблокирован</span>{% endif %}</td>
+                <td>
+                  {% if not u.is_superuser %}
+                  <a href="{% url 'admin_panel:toggle_user' u.pk %}" class="btn btn-sm btn-outline-gold">{% if u.is_active %}Блок{% else %}Разблок{% endif %}</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
