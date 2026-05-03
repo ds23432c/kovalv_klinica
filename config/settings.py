@@ -61,12 +61,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# PostgreSQL — Railway provides DATABASE_URL automatically
-import dj_database_url
-
+# Railway should provide DATABASE_URL; fall back to local SQLite when it is absent.
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
+    import dj_database_url
+
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
@@ -77,12 +77,8 @@ if DATABASE_URL:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('PGDATABASE', 'railway'),
-            'USER': os.environ.get('PGUSER', 'postgres'),
-            'PASSWORD': os.environ.get('PGPASSWORD', ''),
-            'HOST': os.environ.get('PGHOST', 'localhost'),
-            'PORT': os.environ.get('PGPORT', '5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 

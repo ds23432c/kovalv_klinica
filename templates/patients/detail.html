@@ -28,7 +28,6 @@
           <p style="color:var(--text-muted);font-size:.82rem">{{ patient.get_gender_display }} · {{ patient.age }} лет</p>
         </div>
         <div style="border-top:1px solid var(--border);padding-top:1rem">
-          {% for label, value in 'Телефон,'|add:patient.phone|split:',' %}{% endfor %}
           <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
             <span style="color:var(--text-muted);font-size:.82rem">Дата рождения</span>
             <span style="font-size:.85rem;font-weight:500">{{ patient.date_of_birth|date:"d.m.Y" }}</span>

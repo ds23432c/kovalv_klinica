@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from apps.doctors.models import Doctor
 from apps.services.models import Service, ServiceCategory
@@ -26,3 +27,7 @@ def contacts(request):
 def about(request):
     doctors = Doctor.objects.filter(is_active=True).select_related('specialization')
     return render(request, 'core/about.html', {'doctors': doctors})
+
+
+def health(request):
+    return HttpResponse('ok')
