@@ -37,6 +37,12 @@ class PublicAppointmentForm(forms.ModelForm):
             'complaint': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Опишите что вас беспокоит...'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        from datetime import date as dt
+        super().__init__(*args, **kwargs)
+        if not self.initial.get("date"):
+            self.initial["date"] = dt.today()
+
 
 class AppointmentStatusForm(forms.ModelForm):
     class Meta:
@@ -46,4 +52,37 @@ class AppointmentStatusForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-select'}),
             'result': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AppointmentAdminForm(forms.ModelForm):
+    """
+    Форма для админов/врачей: можно менять дату/время, врача, услугу,
+    а также статус/результат/стоимость.
+    """
+    class Meta:
+        model = Appointment
+        fields = [
+            'doctor',
+            'service',
+            'date',
+            'time',
+            'complaint',
+            'notes',
+            'status',
+            'result',
+            'price',
+            'is_paid',
+        ]
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'doctor': forms.Select(attrs={'class': 'form-select'}),
+            'service': forms.Select(attrs={'class': 'form-select'}),
+            'complaint': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'notes': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'result': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'is_paid': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

@@ -19,13 +19,16 @@
         {% if appointments %}
         <div class="table-responsive">
           <table class="table table-clinic">
-            <thead><tr><th>Дата</th><th>Врач</th><th>Услуга</th><th>Статус</th></tr></thead>
+            <thead><tr><th>Дата</th><th>Врач</th><th>Услуга</th><th>Комментарий</th><th>Статус</th></tr></thead>
             <tbody>
               {% for appt in appointments %}
               <tr>
                 <td>{{ appt.date|date:"d.m.Y" }} {{ appt.time|time:"H:i" }}</td>
                 <td>{{ appt.doctor.short_name }}</td>
                 <td>{{ appt.service.name|default:"—" }}</td>
+                <td style="color:var(--text-muted);font-size:.82rem">
+                  {{ appt.complaint|default:"—"|truncatechars:60 }}
+                </td>
                 <td><span class="badge-status-{{ appt.status }}">{{ appt.get_status_display }}</span></td>
               </tr>
               {% endfor %}

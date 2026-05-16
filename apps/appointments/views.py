@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from .models import Appointment
-from .forms import AppointmentForm, PublicAppointmentForm, AppointmentStatusForm
+from .forms import AppointmentForm, PublicAppointmentForm, AppointmentAdminForm
 from apps.patients.models import Patient
 from datetime import date
 
@@ -30,7 +30,7 @@ def book_appointment(request):
             messages.success(request, f'Запись создана! Мы свяжемся с вами по номеру {patient.phone} для подтверждения.')
             return redirect('core:home')
     else:
-        form = PublicAppointmentForm()
+        form = PublicAppointmentForm(initial={'date': date.today()})
     return render(request, 'appointments/book.html', {'form': form})
 
 
@@ -67,13 +67,13 @@ def appointment_detail(request, pk):
         return redirect('accounts:login')
     appointment = get_object_or_404(Appointment, pk=pk)
     if request.method == 'POST':
-        form = AppointmentStatusForm(request.POST, instance=appointment)
+        form = AppointmentAdminForm(request.POST, instance=appointment)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Статус записи обновлён!')
+            messages.success(request, 'Запись обновлена!')
             return redirect('appointments:detail', pk=pk)
     else:
-        form = AppointmentStatusForm(instance=appointment)
+        form = AppointmentAdminForm(instance=appointment)
     return render(request, 'appointments/detail.html', {
         'appointment': appointment,
         'form': form,
